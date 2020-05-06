@@ -1,6 +1,6 @@
-# ndn-tools Build Instructions
+# ndn-drop Build Instructions
 
-This document describes how to build and install ndn-tools.
+This document describes how to build and install ndn-drop.
 
 ## Prerequisites
 
@@ -34,6 +34,6 @@ in ndn-tools source directory:
     ./waf
     sudo ./waf install
 
-To uninstall ndn-tools:
+To uninstall ndn-drop:
 
     sudo ./waf uninstall
