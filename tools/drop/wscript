@@ -1,0 +1,33 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+top = '../..'
+
+def build(bld):
+
+## New
+    bld.objects(
+        target='drop-client-objects',
+        source=bld.path.ant_glob('client/*.cpp', excl='client/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/ndndrop',
+        name='ndndrop',
+        source='client/main.cpp',
+        use='drop-client-objects')
+
+    bld.objects(
+        target='drop-server-objects',
+        source=bld.path.ant_glob('server/*.cpp', excl='server/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/ndndropserver',
+        name='ndndropserver',
+        source='server/main.cpp',
+        use='drop-server-objects')
+
+    ## (for unit tests)
+
+
+    bld(target='drop-objects',
+        use='drop-client-objects drop-server-objects')

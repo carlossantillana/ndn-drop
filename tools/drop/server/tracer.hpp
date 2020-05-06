@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2014-2017,  Regents of the University of California.
+ * Copyright (c) 2015,  Arizona Board of Regents.
  *
  * This file is part of ndn-tools (Named Data Networking Essential Tools).
  * See AUTHORS.md for complete list of ndn-tools authors and contributors.
@@ -15,33 +15,42 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * ndn-tools, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Eric Newberry <enewberry@email.arizona.edu>
  */
 
-#ifndef NDN_TOOLS_DISSECT_NDN_DISSECT_HPP
-#define NDN_TOOLS_DISSECT_NDN_DISSECT_HPP
+#ifndef NDN_TOOLS_DROP_SERVER_TRACER_HPP
+#define NDN_TOOLS_DROP_SERVER_TRACER_HPP
 
 #include "core/common.hpp"
 
-#include <ndn-cxx/encoding/block.hpp>
+#include "drop-server.hpp"
 
 namespace ndn {
-namespace dissect {
+namespace drop {
+namespace server {
 
-class NdnDissect : noncopyable
+/**
+ * @brief logs drop responses
+ */
+class Tracer : noncopyable
 {
 public:
+  Tracer(DropServer& dropServer, const Options& options);
+
+  /**
+   * @brief Prints drop information when interest received
+   * @param name interest name received
+   */
   void
-  dissect(std::ostream& os, std::istream& is);
+  onReceive(const Name& name);
 
 private:
-  void
-  printType(std::ostream& os, uint32_t type);
-
-  void
-  printBlock(std::ostream& os, const Block& block);
+  const Options& m_options;
 };
 
-} // namespace dissect
+} // namespace server
+} // namespace drop
 } // namespace ndn
 
-#endif // NDN_TOOLS_DISSECT_NDN_DISSECT_HPP
+#endif // NDN_TOOLS_DROP_SERVER_TRACER_HPP

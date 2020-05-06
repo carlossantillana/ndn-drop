@@ -14,16 +14,6 @@ def build(bld):
         source='client/main.cpp',
         use='ping-client-objects')
 
-    bld.objects(
-        target='ping-server-objects',
-        source=bld.path.ant_glob('server/*.cpp', excl='server/main.cpp'),
-        use='core-objects')
-
-    bld.program(
-        target='../../bin/ndnpingserver',
-        name='ndnpingserver',
-        source='server/main.cpp',
-        use='ping-server-objects')
 
     ## (for unit tests)
 
