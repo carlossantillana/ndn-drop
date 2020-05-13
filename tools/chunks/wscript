@@ -1,0 +1,31 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+top = '../..'
+
+def build(bld):
+
+    bld.objects(
+        target='ndndropretrieve-objects',
+        source=bld.path.ant_glob('ndndropretrieve/*.cpp', excl='ndndropretrieve/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/ndndropretrieve',
+        name='ndndropretrieve',
+        source='ndndropretrieve/main.cpp',
+        use='ndndropretrieve-objects')
+
+    bld.objects(
+        target='ndndroppublish-objects',
+        source=bld.path.ant_glob('ndndroppublish/*.cpp', excl='ndndroppublish/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/ndndroppublish',
+        name='ndndroppublish',
+        source='ndndroppublish/main.cpp',
+        use='ndndroppublish-objects')
+
+    ## (for unit tests)
+
+    bld(target='chunks-objects',
+        use='ndndropretrieve-objects ndndroppublish-objects')

@@ -100,7 +100,7 @@ private:
       return;
     }
 
-    m_statisticsCollector.computeStatistics().printSummary(std::cout);
+    // m_statisticsCollector.computeStatistics().printSummary(std::cout);
     m_signalSetQuit.async_wait(bind(&Runner::afterQuitSignal, this, _1));
   }
 
