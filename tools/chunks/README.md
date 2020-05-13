@@ -8,8 +8,7 @@
   [NDN naming conventions](http://named-data.net/publications/techreports/ndn-tr-22-ndn-memo-naming-conventions/).
 
 * **ndndropretrieve** is a consumer program that fetches Data segments of a file, optionally
-  discovering the latest version of the file, and writes the content of the retrieved file to
-  the standard output.
+  discovering the latest version of the file, and writes the content of the retrieved file to a newly created file named by the file downloaded for example /localhost/demo/dog.png would download as dog.png on consumer's computer
 
 ## Version discovery in ndndropretrieve
 
