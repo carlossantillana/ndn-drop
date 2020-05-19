@@ -1,6 +1,6 @@
 # ndndropretrieve and ndndroppublish
 
-**ndnpublishchuncks** and **ndndroppublish** are a pair of programs to transfer a file as Data segments.
+**ndndropretrieve** and **ndndroppublish** **ndndroplist** are a set of programs to transfer a file as Data segments.
 
 * **ndndroppublish** is a producer program that reads a file from the standard input, and makes
   it available as NDN Data segments.  It appends version and segment number components
@@ -9,6 +9,11 @@
 
 * **ndndropretrieve** is a consumer program that fetches Data segments of a file, optionally
   discovering the latest version of the file, and writes the content of the retrieved file to a newly created file named by the file downloaded for example /localhost/demo/dog.png would download as dog.png on consumer's computer
+
+  * **ndndroplist** is a producer program that reads a directory, and makes all files in directory
+    available as NDN Data segments.  It appends version and segment number components
+    to the specified name, according to the
+    [NDN naming conventions](http://named-data.net/publications/techreports/ndn-tr-22-ndn-memo-naming-conventions/).
 
 ## Version discovery in ndndropretrieve
 
@@ -72,5 +77,14 @@ the name. For example, if the version is known to be `%FD%00%00%01Qc%CF%17v`, th
 will fetch that exact version of the file (without version discovery):
 
     ndndropretrieve /localhost/demo/gpl3/%FD%00%00%01Qc%CF%17v
+
+### Listing
+
+The following command will publish the all files in specified directory
+
+    ndndroplist -n /ndnDrop/ -d /home/carlos/Documents/CS217B/ndnDrop
+
+Where -n flag specifies the ndn path which the file will be published. and the -d
+  specifies which directory on local computer to post all files from.
 
 For more information, run the programs with `--help` as argument.

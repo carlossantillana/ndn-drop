@@ -57,6 +57,7 @@ main(int argc, char* argv[])
   std::string prefix;
   std::string signingStr;
   Producer::Options opts;
+  std::string ndnDropLink;
 
   po::options_description visibleDesc("Options");
   visibleDesc.add_options()
@@ -76,9 +77,12 @@ main(int argc, char* argv[])
   po::options_description hiddenDesc;
   hiddenDesc.add_options()
     ("ndn-name,n", po::value<std::string>(&prefix), "NDN name for the served content");
+  hiddenDesc.add_options()
+    ("ndn-drop-dir,d", po::value<std::string>(&ndnDropLink), "NDN Drop directory for the served content");
 
   po::positional_options_description p;
   p.add("ndn-name", -1);
+  p.add("ndn-drop-dir", -1);
 
   po::options_description optDesc;
   optDesc.add(visibleDesc).add(hiddenDesc);
@@ -135,7 +139,8 @@ main(int argc, char* argv[])
     std::cerr << "ERROR: Cannot be quiet and verbose at the same time" << std::endl;
     return 2;
   }
-    boost::filesystem::path pa ("/home/carlos/Documents/CS217B/ndnDrop");
+  std::cout << "path:  " << ndnDropLink << std::endl;
+    boost::filesystem::path pa (ndnDropLink);
 
     boost::filesystem::directory_iterator end_itr;
 
@@ -164,20 +169,15 @@ main(int argc, char* argv[])
               outputFileNames[j].erase(0, pos + delimiter.length());
             }
             try {
-              outputFileNames[j].insert(0, "/ndnDrop/");
-              std::cout << "prefix: " << outputFileNames[j] << std::endl;
+              outputFileNames[j].insert(0, prefix);
               std::ifstream *inFile = new std::ifstream;
               inFiles.push_back(inFile);
               inFiles[j]->open(current_file);
-              std::cout << "opened file stream\n";
               Face *face = new Face();
               faces.push_back(face);
               KeyChain *keyChain = new KeyChain();
               keyChains.push_back(keyChain);
-              std::cout << "about to call producer\n";
               producers.push_back(new Producer(outputFileNames[j], *faces[j], *keyChains[j], *inFiles[j], opts));
-              // inFiles[j]->close();
-              std::cout << "closed infile, abou tto call thread\n";
               j++;
             }
             catch (const std::exception& e) {
@@ -188,8 +188,6 @@ main(int argc, char* argv[])
     }
     for (auto p : producers){
       boost::thread *t = group.create_thread(boost::bind(&Producer::run, p));
-      // p->run();
-      std::cout << "about to detach\n";
     }
     group.join_all();
   return 0;
