@@ -140,6 +140,7 @@ main(int argc, char* argv[])
     boost::filesystem::directory_iterator end_itr;
 
     // cycle through the directory
+      std::vector<boost::thread *> threads;
     for (boost::filesystem::directory_iterator itr(pa); itr != end_itr; ++itr)
     {
         // If it's not a directory, list it. If you want to list directories too, just remove this check.
@@ -158,37 +159,18 @@ main(int argc, char* argv[])
               outputFileName.insert(0, "/carlos/ndnDrop/");
               std::cout << "prefix: " << outputFileName << std::endl;
               std::ifstream inFile;
-              std::stringstream tmp;
-              // string entireFile = "";
               inFile.open(current_file);
-              // while(inFile >> tmp){
-              //   // entireFile += tmp;
-              // }
               Face face;
               KeyChain keyChain;
-              Producer producer(outputFileName, face, keyChain,inFile, opts);
-              boost::thread tr(boost::bind(&Producer::run, &producer));
+              Producer producer(outputFileName, face, keyChain, inFile, opts);
+              threads.push_back(new boost::thread(boost::bind(&Producer::run, &producer)));
             }
             catch (const std::exception& e) {
               std::cerr << "ERROR: " << e.what() << std::endl;
               return 1;
             }
         }
-        // t.join();
-
     }
-  // try {
-  //   std::cout << "prefix: " << prefix << std::endl;
-  //   Face face;
-  //   KeyChain keyChain;
-  //   Producer producer(prefix, face, keyChain, std::cin, opts);
-  //   producer.run();
-  // }
-  // catch (const std::exception& e) {
-  //   std::cerr << "ERROR: " << e.what() << std::endl;
-  //   return 1;
-  // }
-
   return 0;
 }
 
