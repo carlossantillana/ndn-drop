@@ -25,6 +25,17 @@ def build(bld):
         source='ndndroppublish/main.cpp',
         use='ndndroppublish-objects')
 
+    bld.objects(
+        target='ndndroplist-objects',
+        source=bld.path.ant_glob('ndndroplist/*.cpp', excl='ndndroplist/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/ndndroplist',
+        name='ndndroplist',
+        source='ndndroplist/main.cpp',
+        use='ndndroplist-objects')
+
     ## (for unit tests)
 
     bld(target='chunks-objects',
