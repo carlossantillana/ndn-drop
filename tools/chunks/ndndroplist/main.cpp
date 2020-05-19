@@ -142,6 +142,13 @@ main(int argc, char* argv[])
     // cycle through the directory
   boost::thread_group group;
   std::vector<Producer*> producers;
+  std::vector<std::string> outputFileNames;
+  std::vector<Face*> faces;
+  std::vector<KeyChain*> keyChains;
+  std::vector<std::ifstream*> inFiles;
+
+
+  int j = 0;
     for (boost::filesystem::directory_iterator itr(pa); itr != end_itr; ++itr)
     {
         // If it's not a directory, list it. If you want to list directories too, just remove this check.
@@ -149,27 +156,29 @@ main(int argc, char* argv[])
             // assign current file name to current_file and echo it out to the console.
             std::string current_file = itr->path().string();
             std::cout << current_file << std::endl;
-            std::string outputFileName = current_file;
+            outputFileNames.push_back(current_file);
             std::string delimiter = "/";
             size_t pos = 0;
             std::string token;
-            while ((pos = outputFileName.find(delimiter)) != std::string::npos) {
-              outputFileName.erase(0, pos + delimiter.length());
+            while ((pos = outputFileNames[j].find(delimiter)) != std::string::npos) {
+              outputFileNames[j].erase(0, pos + delimiter.length());
             }
             try {
-              outputFileName.insert(0, "/ndnDrop/");
-              std::cout << "prefix: " << outputFileName << std::endl;
-              std::ifstream inFile;
-              inFile.open(current_file);
+              outputFileNames[j].insert(0, "/ndnDrop/");
+              std::cout << "prefix: " << outputFileNames[j] << std::endl;
+              std::ifstream *inFile = new std::ifstream;
+              inFiles.push_back(inFile);
+              inFiles[j]->open(current_file);
               std::cout << "opened file stream\n";
-              Face face;
-              KeyChain keyChain;
+              Face *face = new Face();
+              faces.push_back(face);
+              KeyChain *keyChain = new KeyChain();
+              keyChains.push_back(keyChain);
               std::cout << "about to call producer\n";
-              producers.push_back(new Producer(outputFileName, face, keyChain, inFile, opts));
-              inFile.close();
+              producers.push_back(new Producer(outputFileNames[j], *faces[j], *keyChains[j], *inFiles[j], opts));
+              // inFiles[j]->close();
               std::cout << "closed infile, abou tto call thread\n";
-
-              std::cout << "Detached\n";
+              j++;
             }
             catch (const std::exception& e) {
               std::cerr << "ERROR: " << e.what() << std::endl;
@@ -178,8 +187,8 @@ main(int argc, char* argv[])
         }
     }
     for (auto p : producers){
-      // boost::thread *t = group.create_thread(boost::bind(&Producer::run, p));
-      p->run();
+      boost::thread *t = group.create_thread(boost::bind(&Producer::run, p));
+      // p->run();
       std::cout << "about to detach\n";
     }
     group.join_all();
