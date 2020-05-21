@@ -7,6 +7,6 @@ inotifywait -m -q -e delete -e create -e move  -r --format '%:e %w%f' $folder | 
     echo "" > $folder/list.txt
     for f in $folder/*
       do
-        echo $f >> $folder/list.txt
-      done
+        echo $f | rev | cut -d/ -f1 | rev  >> $folder/list.txt
+     done
   done
