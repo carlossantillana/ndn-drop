@@ -99,6 +99,9 @@ private:
   void
   onInterest(const Interest& interest);
 
+    void
+    onInterest2(const Interest& interest);
+
 private:
   const Options& m_options;
   Face& m_face;
@@ -106,6 +109,7 @@ private:
   size_t m_nDrops;
   Block m_payload;
   RegisteredPrefixHandle m_registeredPrefix;
+  RegisteredPrefixHandle m_registeredPrefix2;
 };
 
 } // namespace server

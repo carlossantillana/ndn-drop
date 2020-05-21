@@ -97,6 +97,7 @@ usage(std::ostream& os, const std::string& programName, const po::options_descri
 static int
 main(int argc, char* argv[])
 {
+    printf("hello from server\n");
   Options options;
   std::string prefix;
   auto nMaxDrops = static_cast<std::make_signed_t<size_t>>(options.nMaxDrops);
@@ -170,7 +171,6 @@ main(int argc, char* argv[])
     return 2;
   }
   options.prefix = prefix;
-
   options.freshnessPeriod = time::milliseconds(vm["freshness"].as<time::milliseconds::rep>());
   if (vm.count("_deprecated_freshness_") > 0) {
     options.freshnessPeriod = time::milliseconds(vm["_deprecated_freshness_"].as<time::milliseconds::rep>());
