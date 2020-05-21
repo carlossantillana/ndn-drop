@@ -42,18 +42,26 @@ DropServer::DropServer(Face& face, KeyChain& keyChain, const Options& options)
 void
 DropServer::start()
 {
-  m_registeredPrefix = m_face.setInterestFilter(
+    m_registeredPrefix = m_face.setInterestFilter(
                        Name(m_options.prefix).append("drop"),
                        bind(&DropServer::onInterest, this, _2),
                        [] (const auto&, const auto& reason) {
                          NDN_THROW(std::runtime_error("Failed to register prefix: " + reason));
                        });
+    m_registeredPrefix2 = m_face.setInterestFilter(
+            Name("/ndn/broadcast").append("drop"),
+            bind(&DropServer::onInterest2, this, _2),
+            [] (const auto&, const auto& reason) {
+                NDN_THROW(std::runtime_error("Failed to register prefix: " + reason));
+            });
+
 }
 
 void
 DropServer::stop()
 {
   m_registeredPrefix.cancel();
+  m_registeredPrefix2.cancel();
 }
 
 size_t
@@ -66,6 +74,7 @@ void
 DropServer::onInterest(const Interest& interest)
 {
   afterReceive(interest.getName());
+  std::cout << interest.getName() << std::endl;
 
   auto data = make_shared<Data>(interest.getName());
   data->setFreshnessPeriod(m_options.freshnessPeriod);
@@ -78,6 +87,25 @@ DropServer::onInterest(const Interest& interest)
     afterFinish();
   }
 }
+
+    void
+    DropServer::onInterest2(const Interest& interest)
+    {
+        afterReceive(interest.getName());
+        std::cout << "second" << std::endl;
+        std::cout << interest.getName() << std::endl;
+
+        auto data = make_shared<Data>(interest.getName());
+        data->setFreshnessPeriod(m_options.freshnessPeriod);
+        data->setContent(m_payload);
+        m_keyChain.sign(*data, signingWithSha256());
+        m_face.put(*data);
+
+        ++m_nDrops;
+        if (m_options.nMaxDrops > 0 && m_options.nMaxDrops == m_nDrops) {
+            afterFinish();
+        }
+    }
 
 } // namespace server
 } // namespace drop
