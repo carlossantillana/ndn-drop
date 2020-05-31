@@ -26,6 +26,28 @@ def build(bld):
         use='ndndroppublish-objects')
 
     bld.objects(
+        target='key_exchange/request-objects',
+        source=bld.path.ant_glob('key_exchange/request/*.cpp', excl='key_exchange/request/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/key_exchange/request',
+        name='key_exchange/request',
+        source='key_exchange/request/main.cpp',
+        use='key_exchange/request-objects')
+
+    bld.objects(
+        target='key_exchange/response-objects',
+        source=bld.path.ant_glob('key_exchange/response/*.cpp', excl='key_exchange/response/main.cpp'),
+        use='core-objects')
+
+    bld.program(
+        target='../../bin/key_exchange/response',
+        name='key_exchange/response',
+        source='key_exchange/response/main.cpp',
+        use='key_exchange/response-objects')
+
+    bld.objects(
         target='ndndroplist-objects',
         source=bld.path.ant_glob('ndndroplist/*.cpp', excl='ndndroplist/main.cpp'),
         use='core-objects')
