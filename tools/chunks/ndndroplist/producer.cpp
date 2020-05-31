@@ -29,8 +29,13 @@
  */
 
 #include "producer.hpp"
-
+#include "../crypto/data-enc-dec.hpp"
+#include "../crypto/rsa.hpp"
+#include <ndn-cxx/encoding/block-helpers.hpp>
+#include <ndn-cxx/security/signing-helpers.hpp>
 #include <ndn-cxx/metadata-object.hpp>
+#include <sstream>      // std::istringstream
+#include <string>
 
 namespace ndn {
 namespace chunks {
@@ -49,8 +54,40 @@ Producer::Producer(const Name& prefix, Face& face, KeyChain& keyChain, std::istr
     m_prefix = prefix;
     m_versionedPrefix = Name(m_prefix).appendVersion();
   }
+    RsaKeyParams params;
+    auto priKey = crypto::Rsa::generateKey(params);
+    auto pubKey = crypto::Rsa::deriveEncryptKey(priKey);
+  // get length of file:
+  is.seekg (0, is.end);
+  int length = is.tellg();
+  is.seekg (0, is.beg);
 
-  populateStore(is);
+  u_int8_t * buffer = new u_int8_t [length];
+  char * tmp = new char [length];
+  // read data as a block:
+  is.read (tmp,length);
+
+const char* beg = tmp;
+const char* end = tmp + length;
+  size_t i = 0;
+  for (; beg != end; ++beg, ++i)
+  {
+      buffer[i] = (uint8_t)(*beg);
+  }
+  if (is)
+    std::cout << "all characters read successfully.";
+  else
+    std::cout << "error: only " << is.gcount() << " could be read";
+
+  auto encryptedData = encryptDataContentWithCK(buffer, length, pubKey.data(), pubKey.size());
+  // auto decryptedData = decryptDataContent(encryptedData, priKey.data(), priKey.size());
+  std::string tmpEncrypted;
+  for(auto j = encryptedData.begin(); j != encryptedData.end(); j++){
+    tmpEncrypted.push_back(*j);
+  }
+  std::cout << "tmp encrypted: " << tmpEncrypted << std::endl;
+  std::istringstream input_stream(tmpEncrypted);
+  populateStore(input_stream);
 
   if (m_options.wantShowVersion)
     std::cout << m_versionedPrefix[-1] << std::endl;

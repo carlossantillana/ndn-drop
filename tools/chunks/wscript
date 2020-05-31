@@ -28,13 +28,18 @@ def build(bld):
     bld.objects(
         target='ndndroplist-objects',
         source=bld.path.ant_glob('ndndroplist/*.cpp', excl='ndndroplist/main.cpp'),
-        use='core-objects')
+        use='core-objects, crypto-objects')
 
     bld.program(
         target='../../bin/ndndroplist',
         name='ndndroplist',
         source='ndndroplist/main.cpp',
         use='ndndroplist-objects')
+
+    bld.objects(
+        target='crypto-objects',
+        source=bld.path.ant_glob('crypto/*.cpp', excl='crypto/main.cpp'),
+        use='core-objects')
 
     ## (for unit tests)
 
