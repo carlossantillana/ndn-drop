@@ -80,36 +80,11 @@ Consumer::handleData(const Data& data)
 void
 Consumer::writeInOrderData()
 {
-  std::vector<u_int8_t> beg2;
-  //find a way to make this more dynamic
-  std::ifstream k ("../ndn-drop/key.ndn");
-    k >> std::noskipws;
-    uint8_t c;
-    while (k >> c){
-      beg2.push_back(c);
-    }
-    k.close();
-    std::cout << "begining write\n";
   for (auto it = m_bufferedData.begin();
        it != m_bufferedData.end() && it->first == m_nextToPrint;
        it = m_bufferedData.erase(it), ++m_nextToPrint) {
     const Block& content = it->second->getContent();
-    std::vector<u_int8_t> payload;
-        std::cout << "begining read payload\n";
-
-    for (const uint8_t * it = content.value() ; it <= content.value() + content.value_size(); ++it){
-      payload.push_back(*it);
-    }
-        std::cout << "begining make block\n";
-
-    Block data(payload.data(), payload.size());
-        std::cout << "begining decrypt\n";
-
-    auto decryptedData = decryptDataContent(data, beg2.data(), beg2.size());
-        std::cout << "begining ostream write\n";
-
-    m_outputStream.write(reinterpret_cast<const char*>(decryptedData.data()), decryptedData.size());
-
+    m_outputStream.write(reinterpret_cast<const char*>(content.value()), content.value_size());
   }
 }
 

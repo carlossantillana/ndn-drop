@@ -1,6 +1,6 @@
 # ndndropretrieve and ndndroppublish
 
-**ndndropretrieve** and **ndndroppublish** **ndndroplist** are a set of programs to transfer a file as Data segments.
+**ndndropretrieve** and **ndndroppublish** **ndndroplist** **crypto** are a set of programs to transfer a file as Data segments.
 
 * **ndndroppublish** is a producer program that reads a file from the standard input, and makes
   it available as NDN Data segments.  It appends version and segment number components
@@ -14,6 +14,8 @@
     available as NDN Data segments.  It appends version and segment number components
     to the specified name, according to the
     [NDN naming conventions](http://named-data.net/publications/techreports/ndn-tr-22-ndn-memo-naming-conventions/).
+
+  * **crypto** is a decrytpion program that reads a file, replaces it with a decrypted version of that file.
 
 ## Version discovery in ndndropretrieve
 
@@ -88,3 +90,11 @@ Where -n flag specifies the ndn path which the file will be published. and the -
   specifies which directory on local computer to post all files from.
 
 For more information, run the programs with `--help` as argument.
+
+### Crypto
+
+The following command will publish the all files in specified directory
+
+    crypto fileToDecrypt
+
+Decrypts and replaces the file.

@@ -93,11 +93,12 @@ const char* end = tmp + length;
     std::cout << "error: only " << is.gcount() << " could be read";
 
   auto encryptedData = encryptDataContentWithCK(buffer, length, pubKey.data(), pubKey.size());
+    auto decryptedData = decryptDataContent(encryptedData, beg2.data(), beg2.size());
+
   std::string tmpEncrypted;
   for(auto j = encryptedData.begin(); j != encryptedData.end(); j++){
     tmpEncrypted.push_back(*j);
   }
-  tmpEncrypted.pop_back();
   std::istringstream *input_stream = new std::istringstream(tmpEncrypted);
 
   populateStore(*input_stream);

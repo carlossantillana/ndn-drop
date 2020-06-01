@@ -40,7 +40,12 @@ def build(bld):
         target='crypto-objects',
         source=bld.path.ant_glob('crypto/*.cpp', excl='crypto/main.cpp'),
         use='core-objects')
-
+        
+    bld.program(
+        target='../../bin/crypto',
+        name='ndndropdecrypt',
+        source='crypto/main.cpp',
+        use='crypto-objects')
     ## (for unit tests)
 
     bld(target='chunks-objects',
