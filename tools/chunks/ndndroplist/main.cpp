@@ -34,6 +34,15 @@
 #include <boost/thread.hpp>
 #include <fstream>
 #include <sstream>
+#include <ndn-cxx/security/transform/private-key.hpp>
+#include <ndn-cxx/security/transform/private-key.hpp>
+#include <ndn-cxx/security/transform/public-key.hpp>
+#include <ndn-cxx/encoding/buffer-stream.hpp>
+#include <ndn-cxx/security/transform/buffer-source.hpp>
+#include <ndn-cxx/security/transform/base64-decode.hpp>
+#include <ndn-cxx/security/transform/stream-sink.hpp>
+#include "../crypto/data-enc-dec.hpp"
+#include "../crypto/rsa.hpp"
 namespace po = boost::program_options;
 
 namespace ndn {
@@ -151,7 +160,23 @@ main(int argc, char* argv[])
   std::vector<Face*> faces;
   std::vector<KeyChain*> keyChains;
   std::vector<std::ifstream*> inFiles;
+  const std::string cipherTextBase64 = 
+  "MIICXAIBAAKBgQC7qlkrJvhJo+nwRpJEevpc4BFxTNXZlgUo4Jb9ewEQbm9qQCEZ\n"
+"drZXoCNuwtDamCvypyGaKKHp+zu8IOYu4TtVyb26tB1DOieBwhQ2QEYjhOquWFvT\n"
+"GJ0udph0KKB8d1tb0SZxBUg8EhrwQSw5cdoZTI4jYo2pNNEtGgGPlkRUxwIDAQAB\n"
+"AoGBAKUhMNMSuFj7/YZqYpwVZiXBGDgM9wM9yY59iP7EdFxEAI+KnFVuquYRx/vX\n"
+"OrWOPuWGgL/ITyi244oXnNPVZkIDkVOG6JICMrfxQYsFtS7NeG1jcKwS5L9NhMTQ\n"
+"QczO/m+6cgcqKnIhxHz+jOesHCJMKwNPO2d3K8H0L89HqYoRAkEA8+VUB8eoquJj\n"
+"yXuiS/toCu8nIz4k3tOg8Q0Nc25ylTdZ2ivw/HaqTUP7N7AFvb6Sw5bSoknNIR44\n"
+"Ks3O5eqOrwJBAMT6nl4K9SYNJoMqfvEpTD9Wr1o8p9Sl4eAtM9+cLVT5kcMw4g/R\n"
+"EQLU28OZF4FSsM8XjkmJrFNThmamo6LY4WkCQFHcnljCJhW9SPr+mVnhd2l8HenR\n"
+"WPTFmZZu6B3fa2w0GN+Gsis69Sxb7f0iArtONNqbS/WWydgc2YNcct5u3RcCQErI\n"
+"XzGS9Wlh2ro3ewQxypnNXjtjBdCsvalvX99IGsnFCjrRpzGcDNpHV7vVtl/JtgiZ\n"
+"h9KRaxQjhMYaA8wCjOkCQA5dhqhtq3WsgwCiQQ/UxPk8oJxUuBs33+zNSX+I34ac\n"
+"szAH0qxEJHJvDCtCLUbc3FVdbRkZ7mBCzL374RlfDss=\n";
 
+  size_t keyLen = 1024;
+  Buffer data = Buffer(reinterpret_cast<const uint8_t*>(cipherTextBase64.data()), keyLen);
 
   int j = 0;
     for (boost::filesystem::directory_iterator itr(pa); itr != end_itr; ++itr)
@@ -177,7 +202,7 @@ main(int argc, char* argv[])
               faces.push_back(face);
               KeyChain *keyChain = new KeyChain();
               keyChains.push_back(keyChain);
-              producers.push_back(new Producer(outputFileNames[j], *faces[j], *keyChains[j], *inFiles[j], opts));
+              producers.push_back(new Producer(outputFileNames[j], *faces[j], *keyChains[j], *inFiles[j], opts, data));
               j++;
             }
             catch (const std::exception& e) {

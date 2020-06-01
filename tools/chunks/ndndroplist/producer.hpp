@@ -63,7 +63,7 @@ public:
    *               version number, the current system time is used as version number.
    */
   Producer(const Name& prefix, Face& face, KeyChain& keyChain, std::istream& is,
-           const Options& opts);
+           const Options& opts,Buffer rawKey);
 
   /**
    * @brief Run the Producer

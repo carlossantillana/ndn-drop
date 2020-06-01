@@ -95,7 +95,6 @@ decryptDataContent(const Block& dataBlock,
                          dataBlock.get(ENCRYPTED_AES_KEY).value_size());
   Buffer encryptedPayload(dataBlock.get(ENCRYPTED_PAYLOAD).value(),
                           dataBlock.get(ENCRYPTED_PAYLOAD).value_size());
-
   auto aesKey = crypto::Rsa::decrypt(key, keyLen, encryptedAesKey.data(), encryptedAesKey.size());
   auto payload = crypto::Aes::decrypt(aesKey.data(), aesKey.size(),
                                       encryptedPayload.data(), encryptedPayload.size(), iv);

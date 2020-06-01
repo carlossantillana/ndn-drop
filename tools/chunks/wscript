@@ -6,7 +6,7 @@ def build(bld):
     bld.objects(
         target='ndndropretrieve-objects',
         source=bld.path.ant_glob('ndndropretrieve/*.cpp', excl='ndndropretrieve/main.cpp'),
-        use='core-objects')
+        use='core-objects, crypto-objects')
 
     bld.program(
         target='../../bin/ndndropretrieve',

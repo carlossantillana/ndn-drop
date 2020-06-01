@@ -24,7 +24,7 @@
 #include <ndn-cxx/encoding/buffer-stream.hpp>
 #include <ndn-cxx/security/transform/private-key.hpp>
 #include <ndn-cxx/security/transform/public-key.hpp>
-
+#include <iostream>
 namespace ndn {
 namespace chunks {
 namespace crypto {

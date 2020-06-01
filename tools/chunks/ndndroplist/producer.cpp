@@ -36,12 +36,13 @@
 #include <ndn-cxx/metadata-object.hpp>
 #include <sstream>      // std::istringstream
 #include <string>
+#include <fstream>
 
 namespace ndn {
 namespace chunks {
 
 Producer::Producer(const Name& prefix, Face& face, KeyChain& keyChain, std::istream& is,
-                   const Options& opts)
+                   const Options& opts, Buffer rawKey)
   : m_face(face)
   , m_keyChain(keyChain)
   , m_options(opts)
@@ -55,8 +56,20 @@ Producer::Producer(const Name& prefix, Face& face, KeyChain& keyChain, std::istr
     m_versionedPrefix = Name(m_prefix).appendVersion();
   }
     RsaKeyParams params;
-    auto priKey = crypto::Rsa::generateKey(params);
-    auto pubKey = crypto::Rsa::deriveEncryptKey(priKey);
+  //reads key
+  std::vector<u_int8_t> beg2;
+  //Find a way to make this more dynamic
+  std::ifstream k ("key.ndn");
+    k >> std::noskipws;
+    uint8_t c;
+    while (k >> c){
+      beg2.push_back(c);
+    }
+    security::transform::PrivateKey priKey;
+    priKey.loadPkcs1(beg2.data(), beg2.size());
+    Buffer tmp2  = Buffer(beg2.data(),beg2.size());
+    auto pubKey = crypto::Rsa::deriveEncryptKey(tmp2);
+
   // get length of file:
   is.seekg (0, is.end);
   int length = is.tellg();
@@ -80,14 +93,14 @@ const char* end = tmp + length;
     std::cout << "error: only " << is.gcount() << " could be read";
 
   auto encryptedData = encryptDataContentWithCK(buffer, length, pubKey.data(), pubKey.size());
-  // auto decryptedData = decryptDataContent(encryptedData, priKey.data(), priKey.size());
   std::string tmpEncrypted;
   for(auto j = encryptedData.begin(); j != encryptedData.end(); j++){
     tmpEncrypted.push_back(*j);
   }
-  std::cout << "tmp encrypted: " << tmpEncrypted << std::endl;
-  std::istringstream input_stream(tmpEncrypted);
-  populateStore(input_stream);
+  tmpEncrypted.pop_back();
+  std::istringstream *input_stream = new std::istringstream(tmpEncrypted);
+
+  populateStore(*input_stream);
 
   if (m_options.wantShowVersion)
     std::cout << m_versionedPrefix[-1] << std::endl;
