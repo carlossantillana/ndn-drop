@@ -10,12 +10,12 @@
 * **ndndropretrieve** is a consumer program that fetches Data segments of a file, optionally
   discovering the latest version of the file, and writes the content of the retrieved file to a newly created file named by the file downloaded for example /localhost/demo/dog.png would download as dog.png on consumer's computer
 
-  * **ndndroplist** is a producer program that reads a directory, and makes all files in directory
+* **ndndroplist** is a producer program that reads a directory, and makes all files in directory
     available as NDN Data segments.  It appends version and segment number components
     to the specified name, according to the
     [NDN naming conventions](http://named-data.net/publications/techreports/ndn-tr-22-ndn-memo-naming-conventions/).
 
-  * **crypto** is a decrytpion program that reads a file, replaces it with a decrypted version of that file.
+* **crypto** is a decryption program that reads a file, replaces it with a decrypted version of that file.
 
 ## Version discovery in ndndropretrieve
 
@@ -98,3 +98,11 @@ The following command will publish the all files in specified directory
     crypto fileToDecrypt
 
 Decrypts and replaces the file.
+
+### How to send files across local network
+
+Run `nfd-start` on both local and remote computers.
+On remote computer run  appropriate `ndndroplist` command
+On local computer run `nfdc face create udp://<remoteIp>`
+On local computer run `nfdc route add /ndnDrop udp://<remoteIp>`
+To retrieve data from remote computer: run approriate `ndndropretrieve` command on local computer
